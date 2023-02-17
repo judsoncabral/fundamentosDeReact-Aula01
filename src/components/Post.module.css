@@ -128,3 +128,7 @@
   outline: transparent;
   box-shadow: 0 0 0 2px var(--white);
 }
+
+.commentList {
+  margin-top: 2rem;
+}
