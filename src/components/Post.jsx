@@ -8,6 +8,7 @@ import { useState } from "react";
 export function Post({ author, publishedAt, content }) {
   const [comments, setComments] = useState([
     {
+      id: 1,
       content: "Post Muito Bacana!!!",
       author: {
         avatarUrl: "https://github.com/judsoncabral.png",
@@ -17,6 +18,7 @@ export function Post({ author, publishedAt, content }) {
       publishedAt: new Date(),
     },
     {
+      id: 2,
       content: "Mandou bem🚀🚀🚀",
       author: {
         avatarUrl: "https://github.com/jeef-js.png",
@@ -44,6 +46,10 @@ export function Post({ author, publishedAt, content }) {
     setNewCommentText(event.target.value);
   }
 
+  function deleteComment(comment) {
+    console.log(`Comentario:  ${comment}`);
+  }
+
   //Padronização de quando função é chamada pelo usuario tem prefixo handle;
   function handleCreateNewComment() {
     event.preventDefault();
@@ -53,6 +59,7 @@ export function Post({ author, publishedAt, content }) {
     setComments(
       comments.concat([
         {
+          id: comments.length + 1,
           content: newCommentText,
           author: {
             avatarUrl: "https://github.com/judsoncabral.png",
@@ -88,10 +95,10 @@ export function Post({ author, publishedAt, content }) {
       <div className={styles.content}>
         {content.map((line) => {
           if (line.type === "paragraph") {
-            return <p>{line.content}</p>;
+            return <p key={line.content}>{line.content}</p>;
           } else if (line.type === "link") {
             return (
-              <p>
+              <p key={line.content}>
                 <a href={line.content}>{line.linkName}</a>
               </p>
             );
@@ -116,9 +123,11 @@ export function Post({ author, publishedAt, content }) {
         {comments.map((comment) => {
           return (
             <Comment
+              key={comment.id}
               content={comment.content}
               author={comment.author}
               publishedAt={comment.publishedAt}
+              onDeleteComment={deleteComment}
             />
           );
         })}
