@@ -3,10 +3,10 @@ import { Post } from "./components/Post";
 import { Sidebar } from "./components/Sidebar";
 import "./global.css";
 import styles from "./App.module.css";
-
+import { v4 as uuidv4 } from "uuid";
 const post = [
   {
-    id: 1,
+    id: uuidv4(),
     author: {
       avatarUrl: "https://github.com/judsoncabral.png",
       name: "Judson Cabral de Melo",
@@ -29,7 +29,7 @@ const post = [
     publishedAt: new Date("2023-02-20 19:25:00"),
   },
   {
-    id: 2,
+    id: uuidv4(),
     author: {
       avatarUrl: "https://github.com/jeef-js.png",
       name: "Jefferson Thiago",
