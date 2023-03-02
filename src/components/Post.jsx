@@ -4,11 +4,11 @@ import { Comment } from "./Comment";
 import { Avatar } from "./Avatar";
 import styles from "./Post.module.css";
 import { useState } from "react";
-
+import { v4 as uuidv4 } from "uuid";
 export function Post({ author, publishedAt, content }) {
   const [comments, setComments] = useState([
     {
-      id: 1,
+      id: uuidv4(),
       content: "Post Muito Bacana!!!",
       author: {
         avatarUrl: "https://github.com/judsoncabral.png",
@@ -18,7 +18,7 @@ export function Post({ author, publishedAt, content }) {
       publishedAt: new Date(),
     },
     {
-      id: 2,
+      id: uuidv4(),
       content: "Mandou bem🚀🚀🚀",
       author: {
         avatarUrl: "https://github.com/jeef-js.png",
@@ -43,11 +43,22 @@ export function Post({ author, publishedAt, content }) {
   });
 
   function handleNewCommentChange() {
+    event.target.setCustomValidity("");
     setNewCommentText(event.target.value);
   }
 
-  function deleteComment(comment) {
-    console.log(`Comentario:  ${comment}`);
+  function handleNewCommentInvalid() {
+    event.target.setCustomValidity("Esse campo é obrigatório");
+  }
+
+  function deleteComment(commentToDelete) {
+    console.log(`Comentarios:  ${comments}`);
+    //imutabilidade -> variaveis não sofrem mutacao( sempre novo espaço na memoria)
+    const commentsWithoutDeleteOne = comments.filter((comment) => {
+      return comment.id != commentToDelete.id;
+    });
+    console.log(`Comentarios:  ${commentsWithoutDeleteOne}`);
+    setComments(commentsWithoutDeleteOne);
   }
 
   //Padronização de quando função é chamada pelo usuario tem prefixo handle;
@@ -59,7 +70,7 @@ export function Post({ author, publishedAt, content }) {
     setComments(
       comments.concat([
         {
-          id: comments.length + 1,
+          id: uuidv4(),
           content: newCommentText,
           author: {
             avatarUrl: "https://github.com/judsoncabral.png",
@@ -73,6 +84,8 @@ export function Post({ author, publishedAt, content }) {
 
     setNewCommentText("");
   }
+
+  const isNewCommentEmpty = newCommentText.length === 0;
 
   return (
     <article className={styles.post}>
@@ -113,9 +126,13 @@ export function Post({ author, publishedAt, content }) {
           name="comment"
           value={newCommentText}
           onChange={handleNewCommentChange}
+          onInvalid={handleNewCommentInvalid}
+          required
         />
         <footer>
-          <button type="submit">Publicar</button>
+          <button type="submit" disabled={isNewCommentEmpty}>
+            Publicar
+          </button>
         </footer>
       </form>
 
@@ -124,6 +141,7 @@ export function Post({ author, publishedAt, content }) {
           return (
             <Comment
               key={comment.id}
+              comment={comment}
               content={comment.content}
               author={comment.author}
               publishedAt={comment.publishedAt}

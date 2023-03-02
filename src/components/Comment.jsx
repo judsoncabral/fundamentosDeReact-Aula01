@@ -4,14 +4,14 @@ import { Trash, ThumbsUp } from "phosphor-react";
 import { Avatar } from "./Avatar";
 import styles from "./Comment.module.css";
 
-export function Comment({ content, author, publishedAt, deleteComment }) {
+export function Comment({ comment, onDeleteComment }) {
   const publishedDateFormatted = format(
-    publishedAt,
+    comment.publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
     { locale: ptBR }
   );
 
-  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+  const publishedDateRelativeToNow = formatDistanceToNow(comment.publishedAt, {
     locale: ptBR,
     addSuffix: true,
   });
@@ -19,20 +19,20 @@ export function Comment({ content, author, publishedAt, deleteComment }) {
   function handleDeleteComment() {
     event.preventDefault();
     console.log("delete comment");
-    deleteComment(content);
+    onDeleteComment(comment);
   }
   return (
     <div className={styles.comment}>
-      <Avatar hasBorder={false} src={author.avatarUrl} />
+      <Avatar hasBorder={false} src={comment.author.avatarUrl} />
 
       <div className={styles.commentBox}>
         <div className={styles.commentContent}>
           <header>
             <div className={styles.authorAndTime}>
-              <strong>{author.name}</strong>
+              <strong>{comment.author.name}</strong>
               <time
                 title={publishedDateFormatted}
-                dateTime={publishedAt.toISOString()}
+                dateTime={comment.publishedAt.toISOString()}
               >
                 {publishedDateRelativeToNow}
               </time>
@@ -41,7 +41,7 @@ export function Comment({ content, author, publishedAt, deleteComment }) {
               <Trash size={24} />
             </button>
           </header>
-          <p>{content}</p>
+          <p>{comment.content}</p>
         </div>
 
         <footer className={styles.commentFooter}>
