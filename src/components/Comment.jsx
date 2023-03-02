@@ -3,8 +3,11 @@ import ptBR from "date-fns/locale/pt-BR";
 import { Trash, ThumbsUp } from "phosphor-react";
 import { Avatar } from "./Avatar";
 import styles from "./Comment.module.css";
+import { useState } from "react";
 
 export function Comment({ comment, onDeleteComment }) {
+  const [likeCount, setLikeCount] = useState(0);
+
   const publishedDateFormatted = format(
     comment.publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
@@ -15,6 +18,12 @@ export function Comment({ comment, onDeleteComment }) {
     locale: ptBR,
     addSuffix: true,
   });
+
+  function handleLikeComment() {
+    setLikeCount((newLikeCount) => {
+      return newLikeCount + 1;
+    });
+  }
 
   function handleDeleteComment() {
     event.preventDefault();
@@ -45,9 +54,9 @@ export function Comment({ comment, onDeleteComment }) {
         </div>
 
         <footer className={styles.commentFooter}>
-          <button>
+          <button onClick={handleLikeComment}>
             <ThumbsUp size={24} />
-            Aplaudir <span>20</span>
+            Aplaudir <span>{likeCount}</span>
           </button>
         </footer>
       </div>
