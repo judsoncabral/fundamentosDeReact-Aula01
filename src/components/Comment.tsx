@@ -3,9 +3,21 @@ import ptBR from "date-fns/locale/pt-BR";
 import { Trash, ThumbsUp } from "phosphor-react";
 import { Avatar } from "./Avatar";
 import styles from "./Comment.module.css";
-import { useState } from "react";
+import { useState, FormEvent } from "react";
+import { Author } from "./Post";
 
-export function Comment({ comment, onDeleteComment }) {
+export interface CommentType {
+  id: string;
+  content: string;
+  author: Author;
+  publishedAt: Date;
+}
+
+interface CommentProps {
+  comment: CommentType;
+  onDeleteComment: (comment: CommentType) => void;
+}
+export function Comment({ comment, onDeleteComment }: CommentProps) {
   const [likeCount, setLikeCount] = useState(0);
 
   const publishedDateFormatted = format(
@@ -25,7 +37,7 @@ export function Comment({ comment, onDeleteComment }) {
     });
   }
 
-  function handleDeleteComment() {
+  function handleDeleteComment(event: FormEvent) {
     event.preventDefault();
     console.log("delete comment");
     onDeleteComment(comment);

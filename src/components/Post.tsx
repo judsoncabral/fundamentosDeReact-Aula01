@@ -3,9 +3,32 @@ import ptBR from "date-fns/locale/pt-BR";
 import { Comment } from "./Comment";
 import { Avatar } from "./Avatar";
 import styles from "./Post.module.css";
-import { useState } from "react";
+import { useState, FormEvent, ChangeEvent, InvalidEvent } from "react";
 import { v4 as uuidv4 } from "uuid";
-export function Post({ author, publishedAt, content }) {
+import { CommentType } from "./Comment";
+
+export interface Author {
+  avatarUrl: string;
+  name: string;
+  role: string;
+}
+interface Content {
+  type: "paragraph" | "link";
+  content: string;
+  linkName?: string;
+}
+export interface PostType {
+  id: string;
+  author: Author;
+  publishedAt: Date;
+  content: Content[];
+}
+
+interface postProps {
+  post: PostType;
+}
+
+export function Post({ post }: postProps) {
   const [comments, setComments] = useState([
     {
       id: uuidv4(),
@@ -32,26 +55,26 @@ export function Post({ author, publishedAt, content }) {
   const [newCommentText, setNewCommentText] = useState("");
 
   const publishedDateFormatted = format(
-    publishedAt,
+    post.publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
     { locale: ptBR }
   );
 
-  const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
+  const publishedDateRelativeToNow = formatDistanceToNow(post.publishedAt, {
     locale: ptBR,
     addSuffix: true,
   });
 
-  function handleNewCommentChange() {
+  function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity("");
     setNewCommentText(event.target.value);
   }
 
-  function handleNewCommentInvalid() {
+  function handleNewCommentInvalid(event: InvalidEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity("Esse campo é obrigatório");
   }
 
-  function deleteComment(commentToDelete) {
+  function deleteComment(commentToDelete: CommentType) {
     console.log(`Comentarios:  ${comments}`);
     //imutabilidade -> variaveis não sofrem mutacao( sempre novo espaço na memoria)
     const commentsWithoutDeleteOne = comments.filter((comment) => {
@@ -62,7 +85,7 @@ export function Post({ author, publishedAt, content }) {
   }
 
   //Padronização de quando função é chamada pelo usuario tem prefixo handle;
-  function handleCreateNewComment() {
+  function handleCreateNewComment(event: FormEvent) {
     event.preventDefault();
 
     //Também poderia ser feito com ...coments, novo elemento
@@ -91,22 +114,22 @@ export function Post({ author, publishedAt, content }) {
     <article className={styles.post}>
       <header className={styles.postHeader}>
         <div className={styles.author}>
-          <Avatar hasBorder={true} src={author.avatarUrl} />
+          <Avatar hasBorder={true} src={post.author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <strong>{author.name}</strong>
-            <span>{author.role}</span>
+            <strong>{post.author.name}</strong>
+            <span>{post.author.role}</span>
           </div>
         </div>
 
         <time
           title={publishedDateFormatted}
-          dateTime={publishedAt.toISOString()}
+          dateTime={post.publishedAt.toISOString()}
         >
           {publishedDateRelativeToNow}
         </time>
       </header>
       <div className={styles.content}>
-        {content.map((line) => {
+        {post.content.map((line: Content) => {
           if (line.type === "paragraph") {
             return <p key={line.content}>{line.content}</p>;
           } else if (line.type === "link") {
@@ -137,14 +160,11 @@ export function Post({ author, publishedAt, content }) {
       </form>
 
       <div className={styles.commentList}>
-        {comments.map((comment) => {
+        {comments.map((comment: CommentType) => {
           return (
             <Comment
               key={comment.id}
               comment={comment}
-              content={comment.content}
-              author={comment.author}
-              publishedAt={comment.publishedAt}
               onDeleteComment={deleteComment}
             />
           );

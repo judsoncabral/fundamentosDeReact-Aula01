@@ -4,7 +4,8 @@ import { Sidebar } from "./components/Sidebar";
 import "./global.css";
 import styles from "./App.module.css";
 import { v4 as uuidv4 } from "uuid";
-const post = [
+import { PostType } from "./components/Post";
+const posts: PostType[] = [
   {
     id: uuidv4(),
     author: {
@@ -60,15 +61,8 @@ export function App() {
       <div className={styles.wrapper}>
         <Sidebar />
         <main>
-          {post.map((post) => {
-            return (
-              <Post
-                key={post.id}
-                author={post.author}
-                content={post.content}
-                publishedAt={post.publishedAt}
-              />
-            );
+          {posts.map((post) => {
+            return <Post key={post.id} post={post} />;
           })}
         </main>
       </div>
